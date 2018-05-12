@@ -19,7 +19,7 @@ var (
 
 type UserInfo struct {
 	OpenID    string `json:"openId"`
-	UnionID   string `json:"unionId"`
+	UID   string `json:"unionId"`
 	NickName  string `json:"nickName"`
 	Gender    int    `json:"gender"`
 	City      string `json:"city"`
