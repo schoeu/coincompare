@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-type userCoin struct {
+type UserCoin struct {
 	Count int      `json:"count"`
 	Win   []string `json:"win"`
 	Lose  []string `json:"lose"`
@@ -19,15 +19,16 @@ type userCoin struct {
 func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	var name string
 	var state int
-	var uc userCoin
+	var uc UserCoin
 
 	code := c.PostForm("code")
 	iv := c.PostForm("iv")
 	cryptData := c.PostForm("cryptData")
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-
-		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", userRawInfo.UnionId)
+		fmt.Println(userRawInfo)
+		// rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", userRawInfo.UnionId)
+		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", "oH5VJ1MIfLhswr0LFYRf5RrAEcsQ")
 		utils.ErrHandle(err)
 		count := 0
 		for rows.Next() {
