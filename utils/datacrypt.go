@@ -19,7 +19,7 @@ var (
 
 type UserInfo struct {
 	OpenID    string `json:"openId"`
-	UID   string `json:"unionId"`
+	UnionId   string `json:"unionId"`
 	NickName  string `json:"nickName"`
 	Gender    int    `json:"gender"`
 	City      string `json:"city"`
@@ -65,37 +65,38 @@ func pkcs7Unpad(data []byte, blockSize int) ([]byte, error) {
 	return data[:len(data)-n], nil
 }
 
-func (w *WXBizDataCrypt) Decrypt(encryptedData, iv string) (*UserInfo, error) {
+func (w *WXBizDataCrypt) Decrypt(encryptedData, iv string) (UserInfo, error) {
+	var userInfo UserInfo
 	aesKey, err := base64.StdEncoding.DecodeString(w.sessionKey)
 	if err != nil {
-		return nil, err
+		return userInfo, err
 	}
 	cipherText, err := base64.StdEncoding.DecodeString(encryptedData)
 	if err != nil {
-		return nil, err
+		return userInfo, err
 	}
 	ivBytes, err := base64.StdEncoding.DecodeString(iv)
 	if err != nil {
-		return nil, err
+		return userInfo, err
 	}
 	block, err := aes.NewCipher(aesKey)
 	if err != nil {
-		return nil, err
+		return userInfo, err
 	}
 	mode := cipher.NewCBCDecrypter(block, ivBytes)
 	mode.CryptBlocks(cipherText, cipherText)
 	cipherText, err = pkcs7Unpad(cipherText, block.BlockSize())
 	if err != nil {
-		return nil, err
+		return userInfo, err
 	}
-	var userInfo UserInfo
+	
 	fmt.Println("cipherText", string(cipherText))
 	err = json.Unmarshal(cipherText, &userInfo)
 	if err != nil {
-		return nil, err
+		return userInfo, err
 	}
 	if userInfo.Watermark.AppID != w.appID {
-		return nil, ErrAppIDNotMatch
+		return userInfo, ErrAppIDNotMatch
 	}
-	return &userInfo, nil
+	return userInfo, nil
 }

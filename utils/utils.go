@@ -58,7 +58,7 @@ type rawData struct {
 	Errcode    int    `json:"errcode"`
 }
 
-func GetUserInfoRaw(code string, encryptedData string, iv string) *UserInfo {
+func GetUserInfoRaw(code string, encryptedData string, iv string) UserInfo {
 	url := "https://api.weixin.qq.com/sns/jscode2session?appid=" + config.AppId + "&secret=" + config.Secret + "&js_code=" + code + "&grant_type=authorization_code"
 	res, err := http.Get(url)
 	ErrHandle(err)
