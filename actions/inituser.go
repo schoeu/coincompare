@@ -23,8 +23,16 @@ func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 		_, err := compareDB.Exec("INSERT INTO bt_user(uid, name) VALUE(?, ?) ON DUPLICATE KEY UPDATE name = ?", uid, userRawInfo.NickName, uid)
 		utils.ErrHandle(err)
 
-		err = compareDB.QueryRow("SELECT uid FROM bt_coininfo where uid = ? and state = ?", uid, state).Scan(&suid)
+		rows, err := compareDB.Query("SELECT uid FROM bt_coininfo where uid = ? and state = ?", uid, state)
 		utils.ErrHandle(err)
+		for rows.Next() {
+			err := rows.Scan(&suid)
+			utils.ErrHandle(err)
+		}
+		err = rows.Err()
+		utils.ErrHandle(err)
+		defer rows.Close()
+
 		if suid == "" {
 			_, err := compareDB.Exec("insert into bt_coininfo (uid, coin_name, state) values (?, ?, ?)", uid, coinName, state)
 			utils.ErrHandle(err)
