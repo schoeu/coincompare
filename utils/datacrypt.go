@@ -2,6 +2,7 @@ package utils
 
 
 import (
+	"fmt"
 	"crypto/aes"
 	"crypto/cipher"
 	"encoding/base64"
@@ -88,6 +89,7 @@ func (w *WXBizDataCrypt) Decrypt(encryptedData, iv string) (*UserInfo, error) {
 		return nil, err
 	}
 	var userInfo UserInfo
+	fmt.Println("cipherText", string(cipherText))
 	err = json.Unmarshal(cipherText, &userInfo)
 	if err != nil {
 		return nil, err

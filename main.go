@@ -33,6 +33,7 @@ func main() {
 func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
 	apis := router.Group("/api")
 
+	// get method actions
 	apis.GET("/:type", func(c *gin.Context) {
 		dataType := c.Param("type")
 		actions := routers.GETRouterMap[dataType]
@@ -40,7 +41,7 @@ func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
 			actions(c, infoDb, compareDb)
 		}
 	})
-
+	// post method actions
 	apis.POST("/:type", func(c *gin.Context) {
 		dataType := c.Param("type")
 		actions := routers.POSTRouterMap[dataType]

@@ -26,7 +26,7 @@ func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	cryptData := c.PostForm("cryptData")
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-		fmt.Println(userRawInfo.OpenID)
+		fmt.Println("userRawInfo",userRawInfo.UnionID)
 
 		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", "3")
 		utils.ErrHandle(err)
