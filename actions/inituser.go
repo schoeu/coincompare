@@ -9,7 +9,7 @@ import (
 
 // init user info.
 func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
-	var suid string
+	var hasState string
 	var uc UserCoin
 
 	code := c.PostForm("code")
@@ -23,17 +23,17 @@ func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 		_, err := compareDB.Exec("INSERT INTO bt_user(uid, name) VALUE(?, ?) ON DUPLICATE KEY UPDATE name = ?", uid, userRawInfo.NickName, uid)
 		utils.ErrHandle(err)
 
-		rows, err := compareDB.Query("SELECT uid FROM bt_coininfo where uid = ? and state = ?", uid, state)
+		rows, err := compareDB.Query("SELECT state FROM bt_coininfo where uid = ? and coin_name = ?", uid, coinName)
 		utils.ErrHandle(err)
 		for rows.Next() {
-			err := rows.Scan(&suid)
+			err := rows.Scan(&hasState)
 			utils.ErrHandle(err)
 		}
 		err = rows.Err()
 		utils.ErrHandle(err)
 		defer rows.Close()
 
-		if suid == "" {
+		if hasState == "" {
 			_, err := compareDB.Exec("insert into bt_coininfo (uid, coin_name, state) values (?, ?, ?)", uid, coinName, state)
 			utils.ErrHandle(err)
 		} else {
