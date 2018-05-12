@@ -3,6 +3,7 @@ package actions
 import (
 	"../utils"
 	"database/sql"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -18,17 +19,23 @@ func IsSignUp(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	code := c.PostForm("code")
 	iv := c.PostForm("iv")
 	cryptData := c.PostForm("cryptData")
+
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-		rows, err := compareDB.Query("SELECT EXISTS(select * from bt_user where uid = ?)", userRawInfo.UnionId)
-		utils.ErrHandle(err)
-		for rows.Next() {
-			err := rows.Scan(&state)
+
+		if userRawInfo.UnionId != "" {
+			fmt.Println("userRawInfo~", userRawInfo)
+			rows, err := compareDB.Query("SELECT EXISTS(select * from bt_user where uid = ?)", userRawInfo.UnionId)
 			utils.ErrHandle(err)
+			for rows.Next() {
+				err := rows.Scan(&state)
+				utils.ErrHandle(err)
+				fmt.Println(state, userRawInfo.UnionId)
+			}
+			err = rows.Err()
+			utils.ErrHandle(err)
+			defer rows.Close()
 		}
-		err = rows.Err()
-		utils.ErrHandle(err)
-		defer rows.Close()
 	}
 
 	su := signUp{}
