@@ -7,8 +7,9 @@ import (
 )
 
 var GETRouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
-	"coinslist": actions.GetAllFlow,
+	"coinslist": actions.GetList,
 }
 var POSTRouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
 	"usercoininfo": actions.GetUserCoinInfo,
+	"inituser": actions.InitUser,
 }

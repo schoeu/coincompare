@@ -15,7 +15,7 @@ type UserCoin struct {
 	Rate  string   `json:"rate"`
 }
 
-// 获取流量信息
+// get coins info.
 func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	var name string
 	var state int
@@ -27,8 +27,7 @@ func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
 		fmt.Println(userRawInfo)
-		// rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", userRawInfo.UnionId)
-		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", "oH5VJ1MIfLhswr0LFYRf5RrAEcsQ")
+		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", userRawInfo.UnionId)
 		utils.ErrHandle(err)
 		count := 0
 		for rows.Next() {

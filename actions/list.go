@@ -13,8 +13,8 @@ type coinsInfo struct {
 	Name string `json:"name"`
 }
 
-// 获取流量信息
-func GetAllFlow(c *gin.Context, infoDB *sql.DB, compareDB *sql.DB) {
+// get coin list data.
+func GetList(c *gin.Context, infoDB *sql.DB, compareDB *sql.DB) {
 	var pid, symbol string
 	var ci coinsInfo
 	var ciCtt []coinsInfo
