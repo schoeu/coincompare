@@ -8,4 +8,5 @@ import (
 
 var RouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
 	"coinslist": actions.GetAllFlow,
+	"usercoininfo": actions.GetUserCoinInfo,
 }
