@@ -35,7 +35,15 @@ func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
 
 	apis.GET("/:type", func(c *gin.Context) {
 		dataType := c.Param("type")
-		actions := routers.RouterMap[dataType]
+		actions := routers.GETRouterMap[dataType]
+		if actions != nil {
+			actions(c, infoDb, compareDb)
+		}
+	})
+
+	apis.POST("/:type", func(c *gin.Context) {
+		dataType := c.Param("type")
+		actions := routers.POSTRouterMap[dataType]
 		if actions != nil {
 			actions(c, infoDb, compareDb)
 		}

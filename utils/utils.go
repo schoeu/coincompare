@@ -58,26 +58,22 @@ type rawData struct {
 	Errcode    int    `json:"errcode"`
 }
 
-func GetUserInfoRaw(code string, encryptedData string) rawData {
+func GetUserInfoRaw(code string, encryptedData string, iv string) *UserInfo {
+	url := "https://api.weixin.qq.com/sns/jscode2session?appid=" + config.AppId + "&secret=" + config.Secret + "&js_code=" + code + "&grant_type=authorization_code"
+	res, err := http.Get(url)
+	ErrHandle(err)
+
 	rd := rawData{}
-	if code == "" {
-		log.Println("No response code.")
-	} else {
-		url := "https://api.weixin.qq.com/sns/jscode2session?appid=" + config.AppId + "&secret=" + config.Secret + "&js_code=" + code + "&grant_type=authorization_code"
-		res, err := http.Get(url)
-		ErrHandle(err)
+	body, err := ioutil.ReadAll(res.Body)
 
-		body, err := ioutil.ReadAll(res.Body)
+	json.Unmarshal(body, &rd)
+	res.Body.Close()
+	ErrHandle(err)
 
-		json.Unmarshal(body, &rd)
-		res.Body.Close()
-		ErrHandle(err)
+	fmt.Println(string(body))
 
-		fmt.Println(string(body))
+	pc := NewWXBizDataCrypt(config.AppId, rd.SessionKey)
+	ui, err := pc.Decrypt(encryptedData, iv)
 
-		//pc := NewWXBizDataCrypt(config.AppId, a.SessionKey)
-		//userInfo, err := pc.Decrypt(encryptedData, iv)
-
-	}
-	return rd
+	return ui
 }

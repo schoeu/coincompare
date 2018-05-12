@@ -21,12 +21,14 @@ func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	var ci coinsInfo
 	var ciCtt []coinsInfo
 
-	code := c.Query("code")
+	code := c.PostForm("code")
+	iv := c.PostForm("iv")
+	cryptData := c.PostForm("cryptData")
 	if code != "" {
-		userRawInfo := utils.GetUserInfoRaw(code, "")
+		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
 		fmt.Println(userRawInfo)
 
-		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", userRawInfo.Unionid)
+		rows, err := compareDB.Query("SELECT coin_name, state FROM bt_coincom.bt_coininfo where uid = ?", "3")
 		utils.ErrHandle(err)
 
 		for rows.Next() {
