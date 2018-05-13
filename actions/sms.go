@@ -6,8 +6,8 @@ import (
 	"database/sql"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	. "github.com/gwpp/alidayu-go"
-	
+	alidayu "github.com/gwpp/alidayu-go"
+	"github.com/gwpp/alidayu-go/request"
 	"net/http"
 )
 
@@ -15,7 +15,7 @@ func SendSMS(c *gin.Context, _ *sql.DB, _ *sql.DB) {
 	phone := c.Query("phone")
 	if phone != "" {
 		fmt.Println("phone", phone, config.AppKey, config.AppSecret, config.SignName, config.TemplateCode)
-		client := NewTopClient(config.AppKey, config.AppSecret)
+		client := alidayu.NewTopClient(config.AppKey, config.AppSecret)
 		req := request.NewAlibabaAliqinFcSmsNumSendRequest()
 		req.SmsFreeSignName = config.SignName
 		req.RecNum = phone
