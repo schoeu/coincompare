@@ -24,7 +24,7 @@ func UpdteGid(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 		c.JSON(http.StatusOK, gin.H{
 			"status": 0,
 			"msg":    "ok",
-			"data":   "Insert data successfully.",
+			"data":   gid,
 		})
 	} else {
 		c.JSON(http.StatusOK, gin.H{
