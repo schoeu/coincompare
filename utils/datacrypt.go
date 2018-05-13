@@ -18,6 +18,7 @@ var (
 )
 
 type UserInfo struct {
+	OpenGId   string `json:"openGId"`
 	OpenID    string `json:"openId"`
 	UnionId   string `json:"unionId"`
 	NickName  string `json:"nickName"`

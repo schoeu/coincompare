@@ -7,7 +7,6 @@ import (
 	"net/http"
 )
 
-// get signup info.
 func Login(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	code := c.PostForm("code")
 	iv := c.PostForm("iv")
@@ -17,6 +16,7 @@ func Login(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
+
 		uid := userRawInfo.UnionId
 		if uid != "" {
 			_, err := compareDB.Query("INSERT INTO bt_user(uid, phone, wallet) VALUE(?, ?, ?) ON DUPLICATE KEY UPDATE phone = ?, wallet = ?", uid, phone, wallet, phone, wallet)

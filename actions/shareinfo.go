@@ -8,7 +8,7 @@ import (
 	"net/http"
 )
 
-// get signup info.
+// update share info.
 func ShareInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	code := c.PostForm("code")
 	iv := c.PostForm("iv")
@@ -16,11 +16,9 @@ func ShareInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-		uid := userRawInfo.UnionId
-		if uid != "" {
-			fmt.Println("userRawInfo~", userRawInfo)
+		gid := userRawInfo.OpenGId
+		fmt.Println("gid~~~~", userRawInfo, gid)
 
-		}
 	}
 
 	c.JSON(http.StatusOK, gin.H{
