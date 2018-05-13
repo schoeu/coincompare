@@ -21,11 +21,11 @@ func GetUid(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 			"msg":    "ok",
 			"data":   uid,
 		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 1,
+			"msg":    "No code for request.",
+			"data":   "",
+		})
 	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"status": 1,
-		"msg":    "No code for request.",
-		"data":   "",
-	})
 }

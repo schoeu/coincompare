@@ -40,11 +40,18 @@ func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 			_, err := compareDB.Exec("update bt_coininfo set coin_name = ?, state = ? where uid = ?", coinName, state, uid)
 			utils.ErrHandle(err)
 		}
+		c.JSON(http.StatusOK, gin.H{
+			"status": 0,
+			"msg":    "ok",
+			"data":   uc,
+		})
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"status": 1,
+			"msg":    "No code for request.",
+			"data":   "",
+		})
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"status": 0,
-		"msg":    "ok",
-		"data":   uc,
-	})
+	
 }
