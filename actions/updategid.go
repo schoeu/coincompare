@@ -3,7 +3,6 @@ package actions
 import (
 	"../utils"
 	"database/sql"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
