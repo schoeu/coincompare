@@ -17,8 +17,8 @@ type groupCoinsInfo struct {
 
 // get coin info in a wx group.
 func GetGroupCoins(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
-	name := c.PostForm("name")
-	gid := c.PostForm("gid")
+	name := c.Query("name")
+	gid := c.Query("gid")
 	if gid != "" && name != "" {
 		var state int
 		gci := groupCoinsInfo{}

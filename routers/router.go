@@ -9,6 +9,7 @@ import (
 var GETRouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
 	"coinslist": actions.GetList,
 	"siglerate": actions.GetSigleRate,
+	"getgroupcoins": actions.GetGroupCoins,
 }
 var POSTRouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
 	"usercoininfo":  actions.GetUserCoinInfo,
@@ -18,5 +19,4 @@ var POSTRouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
 	"login":         actions.Login,
 	"updategid":     actions.UpdteGid,
 	"getuid":        actions.GetUid,
-	"getgroupcoins": actions.GetGroupCoins,
 }
