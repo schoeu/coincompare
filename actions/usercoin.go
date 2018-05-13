@@ -42,7 +42,7 @@ func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 			count++
 		}
 		uc.Count = count
-		uc.Rate = fmt.Sprintf("%.1f", float64(len(uc.Win))/float64(count)*100)
+		uc.Rate = fmt.Sprintf("%.2f", float64(len(uc.Win))/float64(count)*100)
 
 		err = rows.Err()
 		utils.ErrHandle(err)
