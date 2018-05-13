@@ -91,7 +91,10 @@ func getoinInfo(coins []string, db *sql.DB) []coinsFullInfo {
 		utils.ErrHandle(err)
 
 		if prevType != name {
-			fullInfoArr = append(fullInfoArr, fi)
+			if fi.Name {
+				fullInfoArr = append(fullInfoArr, fi)
+			}
+
 			fi = coinsFullInfo{}
 			fi.Name = name
 			prevType = name
@@ -105,6 +108,9 @@ func getoinInfo(coins []string, db *sql.DB) []coinsFullInfo {
 		}
 
 		fmt.Println(name, state)
+	}
+	if fi.Name {
+		fullInfoArr = append(fullInfoArr, fi)
 	}
 
 	fmt.Println(fullInfoArr)
