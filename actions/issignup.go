@@ -22,15 +22,15 @@ func IsSignUp(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-
-		if userRawInfo.UnionId != "" {
+		uid := userRawInfo.UnionId
+		if uid != "" {
 			fmt.Println("userRawInfo~", userRawInfo)
-			rows, err := compareDB.Query("SELECT EXISTS(select * from bt_user where uid = ?)", userRawInfo.UnionId)
+			rows, err := compareDB.Query("SELECT EXISTS(select * from bt_user where uid = ?)", uid)
 			utils.ErrHandle(err)
 			for rows.Next() {
 				err := rows.Scan(&state)
 				utils.ErrHandle(err)
-				fmt.Println(state, userRawInfo.UnionId)
+				fmt.Println(state, uid)
 			}
 			err = rows.Err()
 			utils.ErrHandle(err)
