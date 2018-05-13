@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -31,20 +32,26 @@ func GetList(c *gin.Context, infoDB *sql.DB, compareDB *sql.DB) {
 	sqlStr := "select pid, symbol from bt_listings "
 	key := c.Query("key")
 	max := c.Query("max")
-	offset := c.Query("offset")
+	pn := c.Query("pn")
 
 	if key != "" {
 		sqlStr += "where LOCATE('" + utils.CheckSql(key) + "', symbol ) > 0 "
 	}
-	if offset == "" {
-		offset = "0"
+	if pn == "" {
+		pn = "0"
 	}
 	if max == "" {
 		max = "10"
 	}
 
+	pNum, err := strconv.Atoi(pn)
+	maxNum, err := strconv.Atoi(max)
+	utils.ErrHandle(err)
+	offset := strconv.Itoa(pNum * maxNum)
+
 	sqlStr += " limit " + max + " offset " + offset
 
+	fmt.Println(sqlStr)
 	rows, err := infoDB.Query(sqlStr)
 	utils.ErrHandle(err)
 
