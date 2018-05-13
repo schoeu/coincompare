@@ -17,7 +17,6 @@ func Login(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 
 	if code != "" {
 		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-		// INSERT INTO bt_user(uid, phone, wallet) VALUE('33', '1882333333','asdf') ON DUPLICATE KEY UPDATE phone = '55', wallet = 'ccc'
 		uid := userRawInfo.UnionId
 		if uid != "" {
 			_, err := compareDB.Query("INSERT INTO bt_user(uid, phone, wallet) VALUE(?, ?, ?) ON DUPLICATE KEY UPDATE phone = ?, wallet = ?", uid, phone, wallet, phone, wallet)
