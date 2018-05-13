@@ -53,5 +53,4 @@ func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 		})
 	}
 
-	
 }

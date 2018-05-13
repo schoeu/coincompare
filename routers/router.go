@@ -16,6 +16,6 @@ var POSTRouterMap = map[string]func(*gin.Context, *sql.DB, *sql.DB){
 	"issignup":     actions.IsSignUp,
 	"allrate":      actions.GetList,
 	"login":        actions.Login,
-	"shareinfo":    actions.ShareInfo,
+	"updategid":    actions.UpdteGid,
 	"getuid":       actions.GetUid,
 }
