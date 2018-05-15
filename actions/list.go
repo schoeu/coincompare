@@ -10,15 +10,10 @@ import (
 	"strings"
 )
 
-type coinsInfo struct {
-	Pid  string `json:"pid"`
-	Name string `json:"name"`
-}
-
 type coinsFullInfo struct {
 	Count   int    `json:"count"`
-	win     int    `json:"win"`
-	lose    int    `json:"lose"`
+	Win     int    `json:"win"`
+	Lose    int    `json:"lose"`
 	Name    string `json:"name"`
 	Surplus string `json:"surplus"`
 	Deficit string `json:"deficit"`
@@ -60,22 +55,19 @@ func GetList(c *gin.Context, compareDB *sql.DB) {
 		utils.ErrHandle(err)
 		nameVal := name.String
 		stateVal := int(state.Int64)
-		if prevType != nameVal {
-			if fi.Name != "" {
-				fullInfoArr = append(fullInfoArr, fi)
-			}
 
+		if prevType != nameVal && prevType != "" {
+			fullInfoArr = append(fullInfoArr, fi)
 			fi = coinsFullInfo{}
-			fi.Name = nameVal
-			prevType = nameVal
-		} else {
-
-			if stateVal == 1 {
-				fi.win++
-			} else {
-				fi.lose++
-			}
 		}
+
+		if stateVal == 1 {
+			fi.Win++
+		} else if stateVal == 2 {
+			fi.Lose++
+		}
+		fi.Name = nameVal
+		prevType = nameVal
 
 	}
 	if fi.Name != "" {
@@ -83,11 +75,11 @@ func GetList(c *gin.Context, compareDB *sql.DB) {
 	}
 
 	for i, v := range fullInfoArr {
-		count := v.lose + v.win
+		count := v.Lose + v.Win
 		fullInfoArr[i].Count = count
-		sVal := float64(v.win) / float64(count)
+		sVal := float64(v.Win) / float64(count)
 		dVal := 1 - sVal
-		if v.lose == 0 && v.win == 0 {
+		if v.Lose == 0 && v.Win == 0 {
 			sVal = 0.5
 			dVal = 0.5
 		}
@@ -134,9 +126,9 @@ func getoinInfo(coins []string, db *sql.DB) []coinsFullInfo {
 		} else {
 
 			if state == 1 {
-				fi.win++
+				fi.Win++
 			} else {
-				fi.lose++
+				fi.Lose++
 			}
 		}
 
@@ -148,11 +140,11 @@ func getoinInfo(coins []string, db *sql.DB) []coinsFullInfo {
 
 	fmt.Println(fullInfoArr)
 	for i, v := range fullInfoArr {
-		count := v.lose + v.win
+		count := v.Lose + v.Win
 		fullInfoArr[i].Count = count
-		sVal := float64(v.win) / float64(count)
+		sVal := float64(v.Win) / float64(count)
 		dVal := 1 - sVal
-		if v.lose == 0 && v.win == 0 {
+		if v.Lose == 0 && v.Win == 0 {
 			sVal = 0.5
 			dVal = 0.5
 		}
