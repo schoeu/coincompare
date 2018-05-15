@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func Login(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func Login(c *gin.Context, compareDB *sql.DB) {
 	uid := c.PostForm("uid")
 	if uid == "" {
 		code := c.PostForm("code")

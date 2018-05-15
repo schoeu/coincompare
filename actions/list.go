@@ -24,12 +24,13 @@ type coinsFullInfo struct {
 	Deficit string `json:"deficit"`
 }
 
-// get coin list data.
-func GetList(c *gin.Context, infoDB *sql.DB, compareDB *sql.DB) {
-	var pid, symbol string
-	var cList []string
+func GetList(c *gin.Context, compareDB *sql.DB) {
+	var name string
+	var state int
+	var fullInfoArr []coinsFullInfo
 
-	sqlStr := "select pid, symbol from bt_listings "
+	sqlStr := "select  a.symbol, b.state from bt_info.bt_listings as a left join bt_coincom.bt_coininfo as b on a.symbol = b.coin_name"
+
 	key := c.Query("key")
 	max := c.Query("max")
 	pn := c.Query("pn")
@@ -48,37 +49,62 @@ func GetList(c *gin.Context, infoDB *sql.DB, compareDB *sql.DB) {
 	maxNum, err := strconv.Atoi(max)
 	utils.ErrHandle(err)
 	offset := strconv.Itoa(pNum * maxNum)
-
 	sqlStr += " limit " + max + " offset " + offset
-
-	fmt.Println(sqlStr)
-	rows, err := infoDB.Query(sqlStr)
+	rows, err := compareDB.Query(sqlStr)
 	utils.ErrHandle(err)
 
+	var prevType string
+	var fi coinsFullInfo
 	for rows.Next() {
-		err := rows.Scan(&pid, &symbol)
+		err := rows.Scan(&name, &state)
 		utils.ErrHandle(err)
 
-		cList = append(cList, "'"+symbol+"'")
+		if prevType != name {
+			if fi.Name != "" {
+				fullInfoArr = append(fullInfoArr, fi)
+			}
+
+			fi = coinsFullInfo{}
+			fi.Name = name
+			prevType = name
+		} else {
+
+			if state == 1 {
+				fi.win++
+			} else {
+				fi.lose++
+			}
+		}
+
 	}
+	if fi.Name != "" {
+		fullInfoArr = append(fullInfoArr, fi)
+	}
+
+	fmt.Println(fullInfoArr)
+	for i, v := range fullInfoArr {
+		count := v.lose + v.win
+		fullInfoArr[i].Count = count
+		sVal := float64(v.win) / float64(count)
+		dVal := 1 - sVal
+		if v.lose == 0 && v.win == 0 {
+			sVal = 0.5
+			dVal = 0.5
+		}
+
+		fullInfoArr[i].Surplus = fmt.Sprintf("%.1f", sVal*100) + "%"
+		fullInfoArr[i].Deficit = fmt.Sprintf("%.1f", dVal*100) + "%"
+	}
+
 	err = rows.Err()
 	utils.ErrHandle(err)
 	defer rows.Close()
 
-	if len(cList) > 0 {
-		v := getoinInfo(cList, compareDB)
-		c.JSON(http.StatusOK, gin.H{
-			"status": 0,
-			"msg":    "ok",
-			"data":   v,
-		})
-	} else {
-		c.JSON(http.StatusOK, gin.H{
-			"status": 1,
-			"msg":    "Coins list is empty.",
-			"data":   "",
-		})
-	}
+	c.JSON(http.StatusOK, gin.H{
+		"status": 0,
+		"msg":    "ok",
+		"data":   fullInfoArr,
+	})
 }
 
 func getoinInfo(coins []string, db *sql.DB) []coinsFullInfo {

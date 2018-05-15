@@ -7,7 +7,7 @@ import (
 )
 
 // get rate of all users.
-func GetSigleRate(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func GetSigleRate(c *gin.Context, compareDB *sql.DB) {
 	name := c.Query("name")
 	param := []string{"'" + name + "'"}
 	if name != "" {

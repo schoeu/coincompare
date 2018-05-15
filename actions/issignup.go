@@ -13,7 +13,7 @@ type signUp struct {
 }
 
 // get signup info.
-func IsSignUp(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func IsSignUp(c *gin.Context, compareDB *sql.DB) {
 	var state int
 
 	uid := c.PostForm("uid")

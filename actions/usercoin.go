@@ -16,7 +16,7 @@ type UserCoin struct {
 }
 
 // get coins info.
-func GetUserCoinInfo(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func GetUserCoinInfo(c *gin.Context, compareDB *sql.DB) {
 	var name string
 	var state int
 	var uc UserCoin

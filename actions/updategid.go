@@ -8,7 +8,7 @@ import (
 )
 
 // update share info.
-func UpdteGid(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func UpdteGid(c *gin.Context, compareDB *sql.DB) {
 	code := c.PostForm("code")
 	iv := c.PostForm("iv")
 	cryptData := c.PostForm("cryptData")

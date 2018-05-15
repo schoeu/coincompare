@@ -15,10 +15,8 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	app := gin.Default()
 
-	infoDb := utils.OpenDb("mysql", config.InfoDB)
 	compareDb := utils.OpenDb("mysql", config.CompareDB)
 
-	defer infoDb.Close()
 	defer compareDb.Close()
 
 	app.GET("/", func(c *gin.Context) {
@@ -26,12 +24,12 @@ func main() {
 	})
 
 	// API路由处理
-	apiRouters(app, infoDb, compareDb)
+	apiRouters(app, compareDb)
 	app.Run(config.Port)
 }
 
 // API路由处理
-func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
+func apiRouters(router *gin.Engine, compareDb *sql.DB) {
 	apis := router.Group("/api")
 
 	// get method actions
@@ -40,7 +38,7 @@ func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
 		dataType := c.Param("type")
 		actions := routers.GETRouterMap[dataType]
 		if actions != nil {
-			actions(c, infoDb, compareDb)
+			actions(c, compareDb)
 		}
 	})
 	// post method actions
@@ -48,7 +46,7 @@ func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
 		dataType := c.Param("type")
 		actions := routers.POSTRouterMap[dataType]
 		if actions != nil {
-			actions(c, infoDb, compareDb)
+			actions(c, compareDb)
 		}
 	})
 }

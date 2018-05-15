@@ -8,7 +8,7 @@ import (
 )
 
 // init user info.
-func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func InitUser(c *gin.Context, compareDB *sql.DB) {
 	var hasState string
 	var uc UserCoin
 

@@ -8,7 +8,7 @@ import (
 )
 
 // get uid.
-func GetUid(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
+func GetUid(c *gin.Context, compareDB *sql.DB) {
 	code := c.PostForm("code")
 	iv := c.PostForm("iv")
 	cryptData := c.PostForm("cryptData")
