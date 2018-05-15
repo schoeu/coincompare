@@ -25,11 +25,11 @@ type coinsFullInfo struct {
 }
 
 func GetList(c *gin.Context, compareDB *sql.DB) {
-	var name string
-	var state int
+	var name sql.NullString
+	var state sql.NullInt64
 	var fullInfoArr []coinsFullInfo
 
-	sqlStr := "select  a.symbol, b.state from bt_info.bt_listings as a left join bt_coincom.bt_coininfo as b on a.symbol = b.coin_name"
+	sqlStr := "select  a.symbol, b.state from bt_info.bt_listings as a left join bt_coincom.bt_coininfo as b on a.symbol = b.coin_name "
 
 	key := c.Query("key")
 	max := c.Query("max")
@@ -58,18 +58,19 @@ func GetList(c *gin.Context, compareDB *sql.DB) {
 	for rows.Next() {
 		err := rows.Scan(&name, &state)
 		utils.ErrHandle(err)
-
-		if prevType != name {
+		nameVal := name.String
+		stateVal := int(state.Int64)
+		if prevType != nameVal {
 			if fi.Name != "" {
 				fullInfoArr = append(fullInfoArr, fi)
 			}
 
 			fi = coinsFullInfo{}
-			fi.Name = name
-			prevType = name
+			fi.Name = nameVal
+			prevType = nameVal
 		} else {
 
-			if state == 1 {
+			if stateVal == 1 {
 				fi.win++
 			} else {
 				fi.lose++
@@ -81,7 +82,6 @@ func GetList(c *gin.Context, compareDB *sql.DB) {
 		fullInfoArr = append(fullInfoArr, fi)
 	}
 
-	fmt.Println(fullInfoArr)
 	for i, v := range fullInfoArr {
 		count := v.lose + v.win
 		fullInfoArr[i].Count = count
