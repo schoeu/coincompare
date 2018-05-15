@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"./config"
 	"./routers"
 	"./utils"
@@ -31,10 +32,11 @@ func main() {
 
 // API路由处理
 func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
-	apis := router.Group("/api")
+	apis := router.Group("/apis")
 
 	// get method actions
 	apis.GET("/:type", func(c *gin.Context) {
+		fmt.Println("URL", c.Request.URL)
 		dataType := c.Param("type")
 		actions := routers.GETRouterMap[dataType]
 		if actions != nil {
