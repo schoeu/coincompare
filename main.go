@@ -32,7 +32,7 @@ func main() {
 
 // API路由处理
 func apiRouters(router *gin.Engine, infoDb *sql.DB, compareDb *sql.DB) {
-	apis := router.Group("/apis")
+	apis := router.Group("/api")
 
 	// get method actions
 	apis.GET("/:type", func(c *gin.Context) {
