@@ -8,20 +8,21 @@ import (
 )
 
 func Login(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
-	code := c.PostForm("code")
-	iv := c.PostForm("iv")
-	cryptData := c.PostForm("cryptData")
+	uid := c.PostForm("uid")
+	if uid == "" {
+		code := c.PostForm("code")
+		iv := c.PostForm("iv")
+		cryptData := c.PostForm("cryptData")
+		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
+		uid = userRawInfo.UnionId
+	}
+
 	phone := c.PostForm("phone")
 	wallet := c.PostForm("wallet")
 
-	if code != "" {
-		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-
-		uid := userRawInfo.UnionId
-		if uid != "" {
-			_, err := compareDB.Query("INSERT INTO bt_user(uid, phone, wallet) VALUE(?, ?, ?) ON DUPLICATE KEY UPDATE phone = ?, wallet = ?", uid, phone, wallet, phone, wallet)
-			utils.ErrHandle(err)
-		}
+	if uid != "" {
+		_, err := compareDB.Query("INSERT INTO bt_user(uid, phone, wallet) VALUE(?, ?, ?) ON DUPLICATE KEY UPDATE phone = ?, wallet = ?", uid, phone, wallet, phone, wallet)
+		utils.ErrHandle(err)
 		c.JSON(http.StatusOK, gin.H{
 			"status": 0,
 			"msg":    "ok",

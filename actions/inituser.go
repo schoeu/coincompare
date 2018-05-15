@@ -12,15 +12,21 @@ func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	var hasState string
 	var uc UserCoin
 
-	code := c.PostForm("code")
-	iv := c.PostForm("iv")
-	cryptData := c.PostForm("cryptData")
+	uid := c.PostForm("uid")
+	nickName := ""
+	if uid == "" {
+		code := c.PostForm("code")
+		iv := c.PostForm("iv")
+		cryptData := c.PostForm("cryptData")
+		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
+		nickName = userRawInfo.NickName
+		uid = userRawInfo.UnionId
+	}
+
 	state := c.PostForm("state")
 	coinName := c.PostForm("coinname")
-	if code != "" {
-		userRawInfo := utils.GetUserInfoRaw(code, cryptData, iv)
-		uid := userRawInfo.UnionId
-		_, err := compareDB.Exec("INSERT INTO bt_user(uid, name) VALUE(?, ?) ON DUPLICATE KEY UPDATE name = ?", uid, userRawInfo.NickName, uid)
+	if uid != "" {
+		_, err := compareDB.Exec("INSERT INTO bt_user(uid, name) VALUE(?, ?) ON DUPLICATE KEY UPDATE name = ?", uid, nickName, uid)
 		utils.ErrHandle(err)
 
 		rows, err := compareDB.Query("SELECT state FROM bt_coininfo where uid = ? and coin_name = ?", uid, coinName)
@@ -48,7 +54,7 @@ func InitUser(c *gin.Context, _ *sql.DB, compareDB *sql.DB) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"status": 1,
-			"msg":    "No code for request.",
+			"msg":    "No uid for request.",
 			"data":   "",
 		})
 	}
